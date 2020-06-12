@@ -1,0 +1,31 @@
+#!/usr/bin/env python3
+"""Instructions for using a vnv-startup file."""
+
+import os
+from pathlib import Path
+import sys
+import textwrap
+
+from vnv import shell_compat
+
+shells = tuple(sh for sh in shell_compat.shells if sh.startup is not None)
+
+def main():
+    env_shell = Path(os.getenv('SHELL') or '/bin/bash').name
+    rcfile_guess = ('~/.config/fish/config.fish' if env_shell == 'fish'
+                    else f'~/.{env_shell}rc')
+    print("""\
+vnv requires one of the following lines to be run beforehand, depending
+on which activate file you use:""")
+    actfiles_len = max(len(sh.actfile) for sh in shells)
+    for sh in shells:
+        print(f'  {sh.actfile.ljust(actfiles_len)}    {sh.startup}')
+    print(textwrap.fill(f'Assuming your startup file is {rcfile_guess}, run'
+                        ' the following two commands to finish installing vnv,'
+                        ' substituting in the correct LINE:', width=72))
+    print(f"  echo 'LINE' >> {rcfile_guess}") # Should work in all *sh shells.
+    print('  LINE')
+    sys.exit(2)
+
+if __name__ == '__main__':
+    main()
