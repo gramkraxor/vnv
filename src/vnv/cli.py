@@ -16,7 +16,7 @@ from .shell_compat import shells
 
 def badcommand(msg):
     """(Parsing error) print to stderr and quit."""
-    fatalerror(msg, label='bad command', code=2)
+    fatalerror(msg, label='usage', code=2)
 
 
 def echo(text, width=72, **kwargs):
@@ -99,7 +99,7 @@ class CLI:
         shellmap = {sh.name: sh for sh in shells}
         self.shell = shellmap.get(args.pop(0)) if args else None
         if self.shell is None:
-            badcommand('vnv.cli should not be used directly.  Try "vnv".')
+            badcommand('vnv.cli should not be used directly.\nTry "vnv".')
         self.raw_args = tuple(args) # Used for forwarding
         # Instantiate each Command subclass with a reference to the CLI.
         cmds = (Class(self) for Class in Command.__subclasses__())
@@ -170,7 +170,8 @@ Available subcommands:"""
             # No args, inactive, so try to activate from cache.
             cached = os.getenv(vnv_cache)
             if not cached: # Could be None or ''
-                fatalerror('No env cached!\nFor help, run "vnv --help".')
+                fatalerror('No env cached.'
+                           '\nTry "vnv --help" for more information.')
             actfile = self.cli.pathm.get_actfile(Path(cached))
             if actfile is None:
                 fatalerror(f'Cached env "{cached}" is not really an env.')
@@ -218,7 +219,9 @@ To create "my-venv" in the current directory, make sure to use:
             fatalerror('Cannot access virtualenv. Is it installed?')
         # Account for the possiblility of a -- coming before ENV.
         subsequent_args = self.cli.raw_args[2 if self.cli.mixedargs else 3:]
+        echo(f'Creating virtual environment at "{env}"...')
         virtualenv.cli_run([env, *subsequent_args])
+        echo('Done.')
 
 
 class DelCommand(Command):
@@ -240,7 +243,9 @@ Use "vnv -which ENV" to confirm which folder that is."""
             actfile = self.cli.pathm.lookup(env)
             if actfile is not None:
                 env_folder = actfile.parents[1]
+                echo(f'Deleting env "{env_folder}"...')
                 shutil.rmtree(env_folder)
+                echo('Done.')
             else:
                 fatalerror(envnotfound(env))
 
@@ -395,23 +400,35 @@ You can always just go edit {path_file.name} yourself."""
         new_vnv_path = list(self.cli.pathm.raw)
         new_vnv_path.insert(n - 1, path_str)
         write_path_file(new_vnv_path)
+        echo(f'Added {path_str!r} to vnv path.')
 
     def pop(self):
         """$ vnv -path -pop N..."""
         new_vnv_path = list(self.cli.pathm.raw)
         for n in self.parse_ns():
-            new_vnv_path.remove(self.cli.pathm.raw[n - 1])
+            entry = self.cli.pathm.raw[n - 1]
+            echo(f'Removing {entry!r} from vnv path...')
+            new_vnv_path.remove(entry)
         write_path_file(new_vnv_path)
+        echo('Done.')
 
     def order(self):
         """$ vnv -path -order N..."""
         old_vnv_path = list(self.cli.pathm.raw)
         new_vnv_path = []
+        first = True
         for n in self.parse_ns():
-            new_vnv_path.append(self.cli.pathm.raw[n - 1])
+            entry = self.cli.pathm.raw[n - 1]
+            if first:
+                echo(f'Bringing {entry!r} to front...')
+                first = False
+            else:
+                echo(f'Then {entry!r}...')
+            new_vnv_path.append(entry)
             old_vnv_path[n - 1] = None
         new_vnv_path.extend(i for i in old_vnv_path if i is not None)
         write_path_file(new_vnv_path)
+        echo('Done.')
 
     def parse_ns(self):
         """For -path -pop and -path -order, parse all those Ns."""
@@ -423,10 +440,10 @@ You can always just go edit {path_file.name} yourself."""
             try:
                 n = int(n_str)
             except ValueError:
-                badcommand(f'"{n_str}" is not an integer.')
+                badcommand(f'{n_str!r} is not an integer.')
             if n not in valid_n:
                 fatalerror(f'Cannot modify path entry #{n}.')
             if n in ns:
-                fatalerror(f'Got duplicate: {n}. No changes made.')
+                fatalerror(f'Got duplicate: {n}.')
             ns.append(n)
         return ns
