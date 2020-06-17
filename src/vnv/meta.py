@@ -66,8 +66,8 @@ class PathMaster:
             env = os.path.normcase(env)
             for path_entry in self.path:
                 for possible_match in self.get_envs(path_entry):
-                    env_name = os.path.normcase(possible_match.name)
-                    if env_name.startswith(env):
+                    possible_name = os.path.normcase(possible_match.name)
+                    if possible_name.startswith(env):
                         return self.get_actfile(possible_match)
             return None
         return self.get_actfile(Path(env)) # Can be None
