@@ -44,7 +44,7 @@ def expectedgot(expected, got):
 
 def failcheck(msg):
     """(Failed check) print to stderr and quit."""
-    fatalerror(msg, label='failed', code=11)
+    fatalerror(msg, label='failed', code=1)
 
 
 def fatalerror(msg, label='error', code=1):
