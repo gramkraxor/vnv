@@ -63,7 +63,7 @@ FISH = Shell(
     exported='$%s',
     ext='.fish',
     source='source "%s"',
-    startup='less (which vnv-startup.fish) | source'
+    startup='source < (which vnv-startup.fish)'
 )
 
 POWERSHELL = Shell(
