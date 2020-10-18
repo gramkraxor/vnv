@@ -258,10 +258,10 @@ class ListCommand(Command):
 Usage:
     vnv -list [-n | -p]
 
-List all envs on the vnv path.  See "vnv -path --help" for more
+List all envs on the vnv path. See "vnv -path --help" for more
 information.
 
-If -n is given, only print env names, each on its own line.  If -p is
+If -n is given, only print env names, each on its own line. If -p is
 given, do the same with env paths."""
 
     def __call__(self):
@@ -294,7 +294,7 @@ class WhichCommand(Command):
 Usage:
     vnv -which [ENV]
 
-Print the location of ENV, if specified.  If not, print the location of
+Print the location of ENV, if specified. If not, print the location of
 the cached env.
 
 Use this to see what ENV resolves to, or to check the cached env (also
@@ -334,11 +334,11 @@ Usage:
 Display or modify your vnv path.
 
 If you keep your installed envs in a folder somewhere, the vnv path is
-how to tell vnv about it.  The vnv path includes the internal envs
-folder and any newline-separated paths in "{tilde(path_file)}".
+how to tell vnv about it. The vnv path includes the internal envs folder
+and any newline-separated paths in "{tilde(path_file)}".
 
 When given a name like "my-venv", vnv will only look for it on the vnv
-path.  To specify that "my-venv" is in the current directory, use the
+path. To specify that "my-venv" is in the current directory, use the
 path "./my-venv" instead.
 
 vnv only finds envs that your shell can activate.
@@ -347,9 +347,9 @@ vnv -path
     Displays your vnv path.
 
 vnv -path -add [-r] [N] DIR
-    Adds DIR to {path_file.name}, at position N (if specified).  If -r is\
+    Adds DIR to {path_file.name}, at position N (if specified). If -r is\
  given, DIR will not be resolved to an absolute path, allowing it to be\
- relative to wherever vnv is run.  Since {tilde(internal_dir)} is always #0, N\
+ relative to wherever vnv is run. Since {tilde(internal_dir)} is always #0, N\
  must be 1 or more.
 
 vnv -path -pop N...
