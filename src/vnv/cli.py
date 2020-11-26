@@ -347,10 +347,10 @@ vnv -path
     Displays your vnv path.
 
 vnv -path -add [-r] [N] DIR
-    Adds DIR to {path_file.name}, at position N (if specified). If -r is\
- given, DIR will not be resolved to an absolute path, allowing it to be\
- relative to wherever vnv is run. Since {tilde(internal_dir)} is always #0, N\
- must be 1 or more.
+    Adds DIR to {path_file.name}, at position N (if specified). If -r is \
+given, DIR will not be resolved to an absolute path, allowing it to be \
+relative to wherever vnv is run. Since {tilde(internal_dir)} is always #0, N \
+must be 1 or more.
 
 vnv -path -pop N...
     Removes dir(s) by number.
