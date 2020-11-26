@@ -285,7 +285,7 @@ given, do the same with env paths."""
             envs = tuple(self.cli.pathm.get_envs(path_entry))
             if names_only or paths_only:
                 for env in envs:
-                    echo(env.name if names_only else env)
+                    print(env.name if names_only else env)
             # Print titles and indented env names, but skip the title if
             # there's nothing to put under it.
             elif envs:
@@ -320,14 +320,14 @@ stored in {self.cli.shell.exported % vnv_cache})."""
             # Resolve and print env.
             actfile = self.cli.pathm.lookup(env)
             if actfile is not None:
-                echo(actfile.parents[1])
+                print(actfile.parents[1])
             else:
                 failcheck(envnotfound(env))
         else:
             # Print $VNV_CACHE.
             cached = os.getenv(vnv_cache)
             if cached:  # Could be None or ''
-                echo(cached)
+                print(cached)
             else:
                 failcheck('No env cached.')
 
