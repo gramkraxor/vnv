@@ -4,25 +4,25 @@ bash/zsh vs cmd.exe vs csh vs fish vs PowerShell vs xonsh.
 """
 
 
-class Shell: # pylint: disable=too-many-instance-attributes
+class Shell:  # pylint: disable=too-many-instance-attributes
     """Profile of a supported shell, including the Python interpreter."""
 
     def __init__(self, *, name, actfile, deactivate=None, export=None,
                  exported=None, ext=None, source=None, startup=None):
-        self.name = name # Name virtualenv knows it by
-        self.actfile = actfile # Name of activator file
-        self.deactivate = deactivate # Deactivate command
-        self.export = export # Export syntax
-        self.exported = exported # Environment variable syntax
-        self.ext = ext # Suffix to use for the finish script
-        self.source = source # Source command syntax
-        self.startup = startup # What should be in the rcfile
+        self.name = name  # Name virtualenv knows it by
+        self.actfile = actfile  # Name of activator file
+        self.deactivate = deactivate  # Deactivate command
+        self.export = export  # Export syntax
+        self.exported = exported  # Environment variable syntax
+        self.ext = ext  # Suffix to use for the finish script
+        self.source = source  # Source command syntax
+        self.startup = startup  # What should be in the rcfile
 
     def __repr__(self):
         return self.name.upper()
 
 
-BASH = Shell( # Also zsh, and maybe ksh
+BASH = Shell(  # Also zsh, and maybe ksh
     name='bash',
     actfile='activate',
     deactivate='deactivate',

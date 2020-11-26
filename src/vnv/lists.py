@@ -15,7 +15,7 @@ class Betterment:
     def get(self, index, default=None):
         """Like ``dict.get``."""
         try:
-            return self[index] # pylint: disable=unsubscriptable-object
+            return self[index]  # pylint: disable=unsubscriptable-object
         except IndexError:
             return default
 

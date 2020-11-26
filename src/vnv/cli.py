@@ -49,7 +49,7 @@ def failcheck(msg):
 
 def fatalerror(msg, label='error', code=1):
     """Print to stderr and quit."""
-    id_msg = ': '.join(('vnv', label, msg)) # Identify vnv.
+    id_msg = ': '.join(('vnv', label, msg))  # Identify vnv.
     echo(id_msg, file=sys.stderr)
     sys.exit(code)
 
@@ -100,7 +100,7 @@ class CLI:
         self.shell = shellmap.get(args.pop(0)) if args else None
         if self.shell is None:
             badcommand('vnv.cli should not be used directly.\nTry "vnv".')
-        self.raw_args = tuple(args) # Used for forwarding
+        self.raw_args = tuple(args)  # Used for forwarding
         # Instantiate each Command subclass with a reference to the CLI.
         cmds = (Class(self) for Class in Command.__subclasses__())
         self.commands = {cmd.name: cmd for cmd in cmds}
@@ -169,7 +169,7 @@ Available subcommands:"""
         else:
             # No args, inactive, so try to activate from cache.
             cached = os.getenv(vnv_cache)
-            if not cached: # Could be None or ''
+            if not cached:  # Could be None or ''
                 fatalerror('No env cached.'
                            '\nTry "vnv --help" for more information.')
             actfile = self.cli.pathm.get_actfile(Path(cached))
@@ -314,7 +314,7 @@ stored in {self.cli.shell.exported % vnv_cache})."""
         else:
             # Print $VNV_CACHE.
             cached = os.getenv(vnv_cache)
-            if cached: # Could be None or ''
+            if cached:  # Could be None or ''
                 echo(cached)
             else:
                 failcheck('No env cached.')

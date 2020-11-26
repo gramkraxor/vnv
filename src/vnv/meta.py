@@ -51,7 +51,7 @@ class PathMaster:
             for path in path_entry.iterdir():
                 if self.get_actfile(path) is not None:
                     yield path
-        except FileNotFoundError: # path_entry is not a dir
+        except FileNotFoundError:  # path_entry is not a dir
             pass
 
     def lookup(self, env):
@@ -70,4 +70,4 @@ class PathMaster:
                     if possible_name.startswith(env):
                         return self.get_actfile(possible_match)
             return None
-        return self.get_actfile(Path(env)) # Can be None
+        return self.get_actfile(Path(env))  # Can be None
