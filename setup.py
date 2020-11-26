@@ -13,7 +13,7 @@ setuptools.setup(
     description='The little shortcut for virtualenv',
     long_description=long_description,
     long_description_content_type='text/markdown',
-    keywords=['virtualenv', 'virtual environment', 'venv'],
+    keywords=['virtualenv', 'virtual environment', 'venv', 'python'],
     license='Unlicense',
     classifiers=[
         'Intended Audience :: Developers',
