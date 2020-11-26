@@ -18,6 +18,20 @@ def badcommand(msg):
     """(Parsing error) print to stderr and quit."""
     fatalerror(msg, label='usage', code=2)
 
+class doing:
+    """``with`` wrapper for messages like "Doing X... Done.\""""
+
+    done = ' Done.'
+
+    def __init__(self, msg):
+        self.msg = msg
+
+    def __enter__(self):
+        echo(self.msg + '...', width=72 - len(self.done), end='', flush=True)
+
+    def __exit__(self, exc_type, exc_value, traceback):
+        echo(self.done)
+
 
 def echo(text, width=72, **kwargs):
     """``print()``, but wraps long lines, preserving the initial indent."""
@@ -219,9 +233,8 @@ To create "my-venv" in the current directory, make sure to use:
             fatalerror('Cannot access virtualenv. Is it installed?')
         # Account for the possiblility of a -- coming before ENV.
         subsequent_args = self.cli.raw_args[2 if self.cli.mixedargs else 3:]
-        echo(f'Creating virtual environment at "{env}"...')
-        virtualenv.cli_run([env, *subsequent_args])
-        echo('Done.')
+        with doing(f'Creating virtualenv at "{env}"'):
+            virtualenv.cli_run([env, *subsequent_args])
 
 
 class DelCommand(Command):
@@ -243,9 +256,8 @@ Use "vnv -which ENV" to confirm which folder that is."""
             actfile = self.cli.pathm.lookup(env)
             if actfile is not None:
                 env_folder = actfile.parents[1]
-                echo(f'Deleting env "{env_folder}"...')
-                shutil.rmtree(env_folder)
-                echo('Done.')
+                with doing(f'Deleting env "{env_folder}"'):
+                    shutil.rmtree(env_folder)
             else:
                 fatalerror(envnotfound(env))
 
@@ -400,35 +412,25 @@ You can always just go edit {path_file.name} yourself."""
         new_vnv_path = list(self.cli.pathm.raw)
         new_vnv_path.insert(n - 1, path_str)
         write_path_file(new_vnv_path)
-        echo(f'Added {path_str!r} to vnv path.')
 
     def pop(self):
         """$ vnv -path -pop N..."""
         new_vnv_path = list(self.cli.pathm.raw)
         for n in self.parse_ns():
             entry = self.cli.pathm.raw[n - 1]
-            echo(f'Removing {entry!r} from vnv path...')
             new_vnv_path.remove(entry)
         write_path_file(new_vnv_path)
-        echo('Done.')
 
     def order(self):
         """$ vnv -path -order N..."""
         old_vnv_path = list(self.cli.pathm.raw)
         new_vnv_path = []
-        first = True
         for n in self.parse_ns():
             entry = self.cli.pathm.raw[n - 1]
-            if first:
-                echo(f'Bringing {entry!r} to front...')
-                first = False
-            else:
-                echo(f'Then {entry!r}...')
             new_vnv_path.append(entry)
             old_vnv_path[n - 1] = None
         new_vnv_path.extend(i for i in old_vnv_path if i is not None)
         write_path_file(new_vnv_path)
-        echo('Done.')
 
     def parse_ns(self):
         """For -path -pop and -path -order, parse all those Ns."""
