@@ -13,7 +13,7 @@ No more typing out `. /path/to/env/bin/activate`, now it's just
 Install.
 Then run:
 ```
-vnv -new my-venv
+vnv new my-venv
 vnv my-venv
 ```
 Bam. Now you're in a brand new virtualenv named "my-venv".
@@ -26,7 +26,7 @@ But what about your old virtualenvs? If you keep them all in a folder or
 two somewhere, just tell vnv where they are and you can activate them by
 name anywhere on your system:
 ```
-$ vnv -path -add /old-envs
+$ vnv path add /old-envs
 $ cd anywhere
 $ vnv my-old-env
 (my-old-env) $
@@ -62,11 +62,11 @@ Together they make up the "vnv path", with the custom folders listed,
 newline-separated, in `~/.vnv/path.txt`.
 
 ```
-$ vnv -path -add ~/Envs
-$ vnv -path
+$ vnv path add ~/Envs
+$ vnv path
 0. /home/gram/.vnv/envs  (internal)
 1. /home/gram/Envs
-$ vnv -which venv1
+$ vnv which venv1
 /home/gram/Envs/venv1
 ```
 
@@ -97,10 +97,9 @@ Try [virtualenvwrapper] or [pew] for the wrapper experience.
 - Cross-platform, cross-shell
 - Multiple vnv path directories
 - Single 3-character command for everything
-- Create envs with `$ vnv -new`, forwarding additional args to
-  virtualenv
-- Manage envs with `$ vnv -list`, `$ vnv -which`, `$ vnv -del`
-- Manage the vnv path with `$ vnv -path`
+- Create envs with `$ vnv new`, forwarding additional args to virtualenv
+- Manage envs with `$ vnv list`, `$ vnv which`, `$ vnv del`
+- Manage the vnv path with `$ vnv path`
 - Shortcut names: `$ vnv m` can activate `my-venv`
 - Supports `activate_this.py` with `import vnv; vnv.activate('my-venv')`
 - Tries to be useful for scripting
@@ -134,7 +133,7 @@ location when your shell starts.
 Use your startup file (or the environment variables on Windows).
 
 If you want to activate envs in the current directory by name, add `.`
-to the vnv path with `$ vnv -path -add -r .`.
+to the vnv path with `$ vnv path add .`.
 
 vnv path folders don't have to only contain virtualenvs.
 If you keep an env alongside other stuff in a project folder, it's fine
