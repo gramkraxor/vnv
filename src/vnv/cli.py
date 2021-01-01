@@ -152,7 +152,7 @@ class MainCommand(Command):
         start = f"""\
 Usage:
   vnv [ENV]
-  vnv -SUBCOMMAND [ARGS]
+  vnv SUBCOMMAND [ARGS]
 
 vnv {__version__}, the little shortcut for virtualenv.
 
@@ -209,17 +209,17 @@ Available subcommands:"""
 class NewCommand(Command):
     """Create an env"""
 
-    name = '-new'
+    name = 'new'
     long_help = """\
 Usage:
-    vnv -new ENV [VIRTUALENV_OPTIONS]
+    vnv new ENV [VIRTUALENV_OPTIONS]
 
 Create an env with virtualenv, forwarding VIRTUALENV_OPTIONS.
 See "virtualenv --help".
 
 If ENV is a name, it will be created as an internal env.
 To create "my-venv" in the current directory, make sure to use:
-    vnv -new ./my-venv"""
+    vnv new ./my-venv"""
 
     def __call__(self):
         if not self.cli.allargs:
@@ -240,14 +240,14 @@ To create "my-venv" in the current directory, make sure to use:
 class DelCommand(Command):
     """Destroy an env"""
 
-    name = '-del'
+    name = 'del'
     long_help = """\
 Usage:
-    vnv -del ENV...
+    vnv del ENV...
 
 Destroy ENV.
 In other words, delete the folder ENV refers to.
-Use "vnv -which ENV" to confirm which folder that is."""
+Use "vnv which ENV" to confirm which folder that is."""
 
     def __call__(self):
         if not self.cli.allargs:
@@ -265,12 +265,12 @@ Use "vnv -which ENV" to confirm which folder that is."""
 class ListCommand(Command):
     """List installed envs"""
 
-    name = '-list'
+    name = 'list'
     long_help = """\
 Usage:
-    vnv -list [-n | -p]
+    vnv list [-n | -p]
 
-List all envs on the vnv path. See "vnv -path --help" for more
+List all envs on the vnv path. See "vnv path --help" for more
 information.
 
 If -n is given, only print env names, each on its own line. If -p is
@@ -298,13 +298,13 @@ given, do the same with env paths."""
 class WhichCommand(Command):
     """Which env is ...?"""
 
-    name = '-which'
+    name = 'which'
 
     @property
     def long_help(self):
         return f"""\
 Usage:
-    vnv -which [ENV]
+    vnv which [ENV]
 
 Print the location of ENV, if specified. If not, print the location of
 the cached env.
@@ -335,13 +335,13 @@ stored in {self.cli.shell.exported % vnv_cache})."""
 class PathCommand(Command):
     """View/modify your vnv path"""
 
-    name = '-path'
+    name = 'path'
     long_help = f"""\
 Usage:
-    vnv -path
-    vnv -path -add [-r] [N] DIR
-    vnv -path -pop N...
-    vnv -path -order N...
+    vnv path
+    vnv path add [-r] [N] DIR
+    vnv path pop N...
+    vnv path order N...
 
 Display or modify your vnv path.
 
@@ -355,30 +355,30 @@ path "./my-venv" instead.
 
 vnv only finds envs that your shell can activate.
 
-vnv -path
+vnv path
     Displays your vnv path.
 
-vnv -path -add [-r] [N] DIR
+vnv path add [-r] [N] DIR
     Adds DIR to {path_file.name}, at position N (if specified). If -r is \
 given, DIR will not be resolved to an absolute path, allowing it to be \
 relative to wherever vnv is run. Since {tilde(internal_dir)} is always #0, N \
 must be 1 or more.
 
-vnv -path -pop N...
+vnv path pop N...
     Removes dir(s) by number.
 
-vnv -path -order N...
+vnv path order N...
     Brings dir(s) to the start of {path_file.name} by number.
 
 You can always just go edit {path_file.name} yourself."""
 
     def __call__(self):
-        option_cmds = {None: self.print, '-add': self.add, '-pop': self.pop,
-                       '-order': self.order}
+        option_cmds = {None: self.print, 'add': self.add, 'pop': self.pop,
+                       'order': self.order}
         selectnpop(option_cmds, self.cli.mixedargs)()
 
     def print(self):
-        """$ vnv -path"""
+        """$ vnv path"""
         if self.cli.allargs:
             badcommand(expectedgot(0, len(self.cli.allargs)))
         # Display all the searchable paths, numbered and aligned.
@@ -391,7 +391,7 @@ You can always just go edit {path_file.name} yourself."""
             echo(num(n) + path_entry)
 
     def add(self):
-        """$ vnv -path -add [-r] [N] DIR"""
+        """$ vnv path add [-r] [N] DIR"""
         relative = self.cli.mixedargs.eject('-r')
         if len(self.cli.allargs) not in (1, 2):
             badcommand(expectedgot('1 or 2', len(self.cli.allargs)))
@@ -414,7 +414,7 @@ You can always just go edit {path_file.name} yourself."""
         write_path_file(new_vnv_path)
 
     def pop(self):
-        """$ vnv -path -pop N..."""
+        """$ vnv path pop N..."""
         new_vnv_path = list(self.cli.pathm.raw)
         for n in self.parse_ns():
             entry = self.cli.pathm.raw[n - 1]
@@ -422,7 +422,7 @@ You can always just go edit {path_file.name} yourself."""
         write_path_file(new_vnv_path)
 
     def order(self):
-        """$ vnv -path -order N..."""
+        """$ vnv path order N..."""
         old_vnv_path = list(self.cli.pathm.raw)
         new_vnv_path = []
         for n in self.parse_ns():
@@ -433,7 +433,7 @@ You can always just go edit {path_file.name} yourself."""
         write_path_file(new_vnv_path)
 
     def parse_ns(self):
-        """For -path -pop and -path -order, parse all those Ns."""
+        """For path pop and path order, parse all those Ns."""
         if not self.cli.allargs:
             badcommand(expectedgot('1 or more', 0))
         ns = []
