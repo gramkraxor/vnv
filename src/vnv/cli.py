@@ -339,7 +339,7 @@ class PathCommand(Command):
     long_help = f"""\
 Usage:
     vnv path
-    vnv path add [-r] [N] DIR
+    vnv path add [N] DIR
     vnv path pop N...
     vnv path order N...
 
@@ -358,11 +358,10 @@ vnv only finds envs that your shell can activate.
 vnv path
     Displays your vnv path.
 
-vnv path add [-r] [N] DIR
-    Adds DIR to {path_file.name}, at position N (if specified). If -r is \
-given, DIR will not be resolved to an absolute path, allowing it to be \
-relative to wherever vnv is run. Since {tilde(internal_dir)} is always #0, N \
-must be 1 or more.
+vnv path add [N] DIR
+    Adds DIR to {path_file.name}, at position N (if specified). If DIR is not \
+an absolute path, it will be relative to wherever vnv is run. Since \
+{tilde(internal_dir)} is always #0, N must be 1 or more.
 
 vnv path pop N...
     Removes dir(s) by number.
@@ -391,8 +390,7 @@ You can always just go edit {path_file.name} yourself."""
             echo(num(n) + path_entry)
 
     def add(self):
-        """$ vnv path add [-r] [N] DIR"""
-        relative = self.cli.mixedargs.eject('-r')
+        """$ vnv path add [N] DIR"""
         if len(self.cli.allargs) not in (1, 2):
             badcommand(expectedgot('1 or 2', len(self.cli.allargs)))
         max_n = len(self.cli.pathm.path)
@@ -407,10 +405,8 @@ You can always just go edit {path_file.name} yourself."""
                 badcommand(f'N must be an integer between 1 and {max_n}.')
         else:
             n = max_n
-        path_str = (self.cli.allargs[0] if relative
-                    else Path(self.cli.allargs[0]).absolute().as_posix())
         new_vnv_path = list(self.cli.pathm.raw)
-        new_vnv_path.insert(n - 1, path_str)
+        new_vnv_path.insert(n - 1, self.cli.allargs[0])
         write_path_file(new_vnv_path)
 
     def pop(self):
