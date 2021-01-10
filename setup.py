@@ -16,6 +16,7 @@ setuptools.setup(
     keywords=['virtualenv', 'virtual environment', 'venv'],
     license='Unlicense',
     classifiers=[
+        'Environment :: Console',
         'Intended Audience :: Developers',
         'License :: Public Domain',
         'Natural Language :: English',
@@ -25,6 +26,10 @@ setuptools.setup(
         'Programming Language :: Python :: 3.8',
         'Programming Language :: Python :: 3.9',
         'Topic :: Software Development',
+        'Topic :: Software Development :: Libraries',
+        'Topic :: Software Development :: Testing',
+        'Topic :: Software Development :: User Interfaces',
+        'Topic :: Utilities',
     ],
     packages=setuptools.find_packages(where='src'),
     package_dir={'': 'src'},
