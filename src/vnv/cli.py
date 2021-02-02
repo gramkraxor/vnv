@@ -9,7 +9,7 @@ import sys
 import textwrap
 
 from .lists import BetterList, ChainList
-from .meta import (PathMaster, __version__, arg_is_name, internal_dir,
+from .meta import (PathManager, __version__, arg_is_name, internal_dir,
                    path_file, vnv_cache, vnv_home)
 from .shell_compat import shells
 
@@ -129,7 +129,7 @@ class CLI:
         if help_flag:
             echo(cmd.long_help)
         else:
-            self.pathm = PathMaster(self.shell)
+            self.pathm = PathManager(self.shell)
             cmd()
         sys.exit(0)
 

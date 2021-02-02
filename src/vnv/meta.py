@@ -24,7 +24,7 @@ def make_home():
     path_file.touch(exist_ok=True)
 
 
-class PathMaster:
+class PathManager:
     """Path resolution manager."""
 
     def __init__(self, shell):
