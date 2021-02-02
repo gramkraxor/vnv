@@ -1,12 +1,10 @@
 """Things used between cli.py and python.py, mostly to do with "~/.vnv"."""
 
+__version__ = '1.0'
+
 import os
 from pathlib import Path, PurePath
 
-import pkg_resources
-
-# Ask setuptools for version.
-__version__ = pkg_resources.require('vnv')[0].version
 vnv_home = Path.home() / '.vnv'
 internal_dir = vnv_home / 'envs'
 path_file = vnv_home / 'path.txt'
