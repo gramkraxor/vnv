@@ -10,6 +10,7 @@ Written by Gramkraxor
 Public Domain
 """
 
+__version__ = '1.0'
+
 from .cli import main
-from .meta import __version__
 from .python import activate

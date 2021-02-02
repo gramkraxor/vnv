@@ -1,7 +1,5 @@
 """Things used between cli.py and python.py, mostly to do with "~/.vnv"."""
 
-__version__ = '1.0'
-
 import os
 from pathlib import Path, PurePath
 

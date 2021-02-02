@@ -8,9 +8,10 @@ import shutil
 import sys
 import textwrap
 
+from . import __version__
 from .lists import BetterList, ChainList
-from .meta import (PathManager, __version__, arg_is_name, internal_dir,
-                   path_file, vnv_cache, vnv_home)
+from .meta import (PathManager, arg_is_name, internal_dir, path_file,
+                   vnv_cache, vnv_home)
 from .shell_compat import shells
 
 
