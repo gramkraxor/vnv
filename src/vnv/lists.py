@@ -13,14 +13,14 @@ class Betterment:
         return True
 
     def get(self, index, default=None):
-        """Like ``dict.get``."""
+        """Like `dict.get`."""
         try:
             return self[index]  # pylint: disable=unsubscriptable-object
         except IndexError:
             return default
 
     def safepop(self, index=-1, default=None):
-        """Like ``dict.pop``."""
+        """Like `dict.pop`."""
         try:
             return self.pop(index)
         except IndexError:
@@ -35,7 +35,7 @@ class ChainList(Betterment):
     """List-like access object for a series of sub-lists."""
 
     def _access(self, key):
-        """Find ``link`` and ``i`` such that ``self[key]`` <-> ``link[i]``."""
+        """Find `link` and `i` such that `self[key]` <-> `link[i]`."""
         if key < 0:
             key += len(self)
         if key >= 0:

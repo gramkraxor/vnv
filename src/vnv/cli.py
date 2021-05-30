@@ -20,7 +20,7 @@ def badcommand(msg):
     fatalerror(msg, label='usage', code=2)
 
 class doing:
-    """``with`` wrapper for messages like "Doing X... Done.\""""
+    """`with` wrapper for messages like "Doing X... Done.\""""
 
     done = ' Done.'
 
@@ -35,7 +35,7 @@ class doing:
 
 
 def echo(text, width=72, **kwargs):
-    """``print()``, but wraps long lines, preserving the initial indent."""
+    """`print()`, but wraps long lines, preserving the initial indent."""
     for line in str(text).splitlines():
         if len(line) > width:
             indent = re.match('\\s*', line)[0]
@@ -45,7 +45,7 @@ def echo(text, width=72, **kwargs):
 
 
 def envnotfound(env):
-    """``'Env "my-venv" not found. Did you mean "./my-venv"?'``"""
+    """`'Env "my-venv" not found. Did you mean "./my-venv"?'`"""
     msg = f'Env "{env}" not found.'
     if arg_is_name(env) and Path(env).exists():
         msg += f'\nDid you mean "./{env}"?'
@@ -75,9 +75,9 @@ def main(args=None):
 
 
 def selectnpop(dic, lis, i=0):
-    """If ``dic[lis[i]]`` exists, return it after popping ``lis[i]``.
+    """If `dic[lis[i]]` exists, return it after popping `lis[i]`.
 
-    Falls back on ``dic[None]``.
+    Falls back on `dic[None]`.
     """
     try:
         selection = dic[lis[i]]
@@ -88,7 +88,7 @@ def selectnpop(dic, lis, i=0):
 
 
 def tilde(path):
-    """Inverse of ``Path.expanduser()``. For display purposes."""
+    """Inverse of `Path.expanduser()`. For display purposes."""
     try:
         rel = path.relative_to(Path.home())
     except ValueError:

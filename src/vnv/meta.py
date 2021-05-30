@@ -10,7 +10,7 @@ vnv_cache = 'VNV_CACHE'
 
 
 def arg_is_name(arg):
-    """Is ``arg`` a simple name?."""
+    """Is `arg` a simple name?."""
     return arg != '..' and PurePath(arg).name == arg
 
 
@@ -51,14 +51,14 @@ class PathManager:
             pass
 
     def lookup(self, env):
-        """Get the activate file for ``env``."""
+        """Get the activate file for `env`."""
         if arg_is_name(env):
             # If there is an exact match by name, return it.
             for path_entry in self.path:
                 actfile = self.get_actfile(path_entry / env)
                 if actfile is not None:
                     return actfile
-            # Otherwise, return the first env ``env`` is short for.
+            # Otherwise, return the first env `env` is short for.
             env = os.path.normcase(env)
             for path_entry in self.path:
                 for possible_match in self.get_envs(path_entry):

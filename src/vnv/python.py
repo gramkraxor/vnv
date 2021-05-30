@@ -5,7 +5,7 @@ from .shell_compat import PYTHON
 
 
 def activate(env):
-    """Find ``env`` and use activate_this.py."""
+    """Find `env` and use activate_this.py."""
     # pylint: disable=exec-used
     actfile = PathManager(PYTHON).lookup(env)
     if actfile is None:
