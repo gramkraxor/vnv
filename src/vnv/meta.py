@@ -14,20 +14,18 @@ def arg_is_name(arg):
     return arg != '..' and PurePath(arg).name == arg
 
 
-def make_home():
-    """Make sure ~/.vnv is present."""
-    internal_dir.mkdir(parents=True, exist_ok=True)
-    path_file.touch(exist_ok=True)
-
-
 class PathManager:
     """Path resolution manager."""
 
     def __init__(self, shell):
         self.shell = shell
-        make_home()
-        path_lines = path_file.read_text().splitlines()
-        self.raw = tuple(filter(None, map(str.strip, path_lines)))
+        try:
+            path_text = path_file.read_text()
+        except OSError:
+            self.raw = ()
+        else:
+            path_lines = path_text.splitlines()
+            self.raw = tuple(filter(None, map(str.strip, path_lines)))
         self.path = (internal_dir, *map(Path, self.raw))
 
     def get_actfile(self, path):

@@ -19,6 +19,7 @@ def badcommand(msg):
     """(Parsing error) print to stderr and quit."""
     fatalerror(msg, label='usage', code=2)
 
+
 class doing:
     """`with` wrapper for messages like "Doing X... Done.\""""
 
@@ -28,7 +29,8 @@ class doing:
         self.msg = msg
 
     def __enter__(self):
-        echo(self.msg + '...', width=72 - len(self.done), end='', flush=True)
+        width = 72 - len(self.done)
+        echo(self.msg + '...', width=width, end='', flush=True)
 
     def __exit__(self, exc_type, exc_value, traceback):
         echo(self.done)
@@ -100,6 +102,8 @@ def tilde(path):
 
 def write_path_file(new_vnv_path):
     """Overwrite path.txt."""
+    path_file.parent.mkdir(parents=True, exist_ok=True)
+    path_file.touch(exist_ok=True)
     path_file.write_text('\n'.join(new_vnv_path))
 
 
@@ -226,12 +230,13 @@ To create "my-venv" in the current directory, make sure to use:
         if not self.cli.allargs:
             badcommand(expectedgot('1 or more', 0))
         env = self.cli.allargs[0]
-        if arg_is_name(env):
-            env = str(internal_dir / env)
         try:
             import virtualenv
         except ImportError:
             fatalerror('Cannot access virtualenv. Is it installed?')
+        if arg_is_name(env):
+            env = str(internal_dir / env)
+            internal_dir.mkdir(parents=True, exist_ok=True)
         # Account for the possiblility of a -- coming before ENV.
         subsequent_args = self.cli.raw_args[2 if self.cli.mixedargs else 3:]
         with doing(f'Creating virtualenv at "{env}"'):
