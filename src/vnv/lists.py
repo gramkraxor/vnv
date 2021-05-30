@@ -30,6 +30,9 @@ class Betterment:
 class BetterList(list, Betterment):
     """List with better popping features."""
 
+    def __repr__(self):
+        return f'{type(self).__name__}({list.__repr__(self)})'
+
 
 class ChainList(Betterment):
     """List-like access object for a series of sub-lists."""
