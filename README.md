@@ -145,6 +145,5 @@ to add the whole project folder to the vnv path.
 vnv is made by me, Gramkraxor.
 It's in the public domain, so it's yours to tinker with.
 
-[![Donate](https://krax.dev/paypal-img)](https://krax.dev/paypal)
 
 [![xkcd #1319: Automation](https://imgs.xkcd.com/comics/automation.png "xkcd #1319: Automation")](https://xkcd.com/1319/)
