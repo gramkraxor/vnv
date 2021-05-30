@@ -8,24 +8,42 @@ import textwrap
 
 from vnv import shell_compat
 
-shells = tuple(sh for sh in shell_compat.shells if sh.startup is not None)
+shell_families = tuple(sh for sh in shell_compat.shells
+                       if sh.startup is not None)
+
+def stderr(*strings, **kwargs):
+    print(*strings, **kwargs, file=sys.stderr)
+
+
+def stderrwrap(string):
+    wrapped = textwrap.fill(string.strip(), width=72, break_on_hyphens=False)
+    stderr(wrapped, end='\n\n')
+
 
 def main():
     env_shell = Path(os.getenv('SHELL') or '/bin/bash').name
     rcfile_guess = ('~/.config/fish/config.fish' if env_shell == 'fish'
                     else f'~/.{env_shell}rc')
-    print("""\
-vnv requires one of the following lines to be run beforehand, depending
-on which activate file you use:""")
-    actfiles_len = max(len(sh.actfile) for sh in shells)
-    for sh in shells:
-        print(f'  {sh.actfile.ljust(actfiles_len)}    {sh.startup}')
-    print(textwrap.fill(f'Assuming your startup file is {rcfile_guess}, run'
-                        ' the following two commands to finish installing vnv,'
-                        ' substituting in the correct LINE:', width=72))
-    print(f"  echo 'LINE' >> {rcfile_guess}") # Should work in all *sh shells.
-    print('  LINE')
+    stderrwrap('vnv: Wrapper needed for this shell.')
+    stderrwrap("""
+Here are the virtualenv activators with the corresponding startup
+commands needed to use them:
+""")
+    actfiles_len = max(len(sh.actfile) for sh in shell_families)
+    for sh in shell_families:
+        stderr(f'  {sh.actfile.ljust(actfiles_len)}    {sh.startup}')
+    stderr()
+    stderrwrap(f"""
+To finish installing vnv, add the right startup command to your shell's
+startup file ({rcfile_guess} maybe?) and then run the same command in
+this session.
+""")
+    stderrwrap('For example, to set up vnv for bash, you would run:')
+    bash = shell_compat.BASH
+    stderr(f"  echo '{bash.startup}' >> ~/.bashrc")
+    stderr(f'  {bash.startup}')
     sys.exit(2)
+
 
 if __name__ == '__main__':
     main()
