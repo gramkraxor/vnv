@@ -34,17 +34,8 @@ class BetterList(list, Betterment):
 class ChainList(Betterment):
     """List-like access object for a series of sub-lists."""
 
-    def _access(self, key):
-        """Find `link` and `i` such that `self[key]` <-> `link[i]`."""
-        if key < 0:
-            key += len(self)
-        if key >= 0:
-            index = key
-            for link in self.links:
-                if index < len(link):
-                    return link, index
-                index -= len(link)
-        raise IndexError(f'{type(self).__name__} index out of range')
+    def __init__(self, *links):
+        self.links = list(links)
 
     def __contains__(self, key):
         return any(key in link for link in self.links)
@@ -56,9 +47,6 @@ class ChainList(Betterment):
     def __getitem__(self, key):
         link, index = self._access(key)
         return link[index]
-
-    def __init__(self, *links):
-        self.links = list(links)
 
     def __iter__(self):
         for link in self.links:
@@ -74,6 +62,18 @@ class ChainList(Betterment):
     def __setitem__(self, key, value):
         link, index = self._access(key)
         link[index] = value
+
+    def _access(self, key):
+        """Find `link` and `i` such that `self[key]` <-> `link[i]`."""
+        if key < 0:
+            key += len(self)
+        if key >= 0:
+            index = key
+            for link in self.links:
+                if index < len(link):
+                    return link, index
+                index -= len(link)
+        raise IndexError(f'{type(self).__name__} index out of range')
 
     def copy(self):
         return type(self)(*self.links)
