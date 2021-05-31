@@ -10,8 +10,10 @@ import textwrap
 
 from . import __version__
 from .lists import BetterList, ChainList
-from .meta import PathManager, arg_is_name, internal_dir, vnv_cache, vnv_home
+from .meta import PathManager, arg_is_name, internal_dir, path_var, vnv_home
 from .shell_compat import shells
+
+cache_var = 'VNV_CACHE'
 
 
 def badcommand(msg):
@@ -88,8 +90,19 @@ def selectnpop(dic, lis, i=0):
     return selection
 
 
+def tilde(path):
+    """Inverse of `Path.expanduser()`. For display purposes."""
+    try:
+        rel = path.relative_to(Path.home())
+    except ValueError:
+        pass
+    else:
+        path = '~' / rel
+    return path.as_posix()
+
+
 class CLI:
-    """Instance of CLI execution. Holds the args, vnv path, etc."""
+    """Instance of CLI execution. Holds the args, search path, etc."""
 
     def __init__(self, args=None):
         args = sys.argv[1:] if args is None else list(args)
@@ -112,10 +125,10 @@ class CLI:
         self.allargs = ChainList(self.mixedargs, ddargs)
         help_flag = self.mixedargs.eject('--help')
         cmd = selectnpop(self.commands, self.mixedargs)
+        self.pathm = PathManager(self.shell)
         if help_flag:
             echo(cmd.long_help)
         else:
-            self.pathm = PathManager(self.shell)
             cmd()
         sys.exit(0)
 
@@ -142,8 +155,8 @@ Usage:
 
 vnv {__version__}, the little shortcut for virtualenv.
 
-Run "vnv ENV" to activate and cache an env, then just "vnv" to toggle it
-afterwards.
+Run "vnv ENV" to activate and cache an env, then just "vnv" to toggle \
+it afterwards.
 
 Available subcommands:"""
         subcmds = list(self.cli.commands.values())
@@ -168,7 +181,7 @@ Available subcommands:"""
             self.deactivate()
         else:
             # No args, inactive, so try to activate from cache.
-            cached = os.getenv(vnv_cache)
+            cached = os.getenv(cache_var)
             if not cached:  # Could be None or ''
                 fatalerror('No env cached.'
                            '\nTry "vnv --help" for more information.')
@@ -181,13 +194,14 @@ Available subcommands:"""
         lines = [self.cli.shell.source % actfile]
         if set_cache:
             lines.append(self.cli.shell.export
-                         % (vnv_cache, actfile.parents[1]))
+                         % (cache_var, actfile.parents[1]))
         self.finish(lines)
 
     def deactivate(self):
         self.finish([self.cli.shell.deactivate])
 
     def finish(self, lines):
+        vnv_home.mkdir(parents=True, exist_ok=True)
         finish_file = vnv_home / ('finish' + self.cli.shell.ext)
         finish_file.write_text('\n'.join(lines))
 
@@ -196,16 +210,20 @@ class NewCommand(Command):
     """Create an env"""
 
     name = 'new'
-    long_help = """\
+
+    @property
+    def long_help(self):
+        return f"""\
 Usage:
-    vnv new ENV [VIRTUALENV_OPTIONS]
+  vnv new ENV [VIRTUALENV_OPTIONS]
 
 Create an env with virtualenv, forwarding VIRTUALENV_OPTIONS.
 See "virtualenv --help".
 
-If ENV is a name, it will be created as an internal env.
-To create "my-venv" in the current directory, make sure to use:
-    vnv new ./my-venv"""
+If ENV is a name, it will be created in the first directory of the vnv \
+search path ({tilde(self.cli.pathm.path[0])}). To create "my-venv" in \
+the current directory, use the explicit path "./my-venv".
+"""
 
     def __call__(self):
         if not self.cli.allargs:
@@ -216,8 +234,8 @@ To create "my-venv" in the current directory, make sure to use:
         except ImportError:
             fatalerror('Cannot access virtualenv. Is it installed?')
         if arg_is_name(env):
-            env = str(internal_dir / env)
-            internal_dir.mkdir(parents=True, exist_ok=True)
+            first_dir = self.cli.pathm.path[0]
+            env = str(first_dir / env)
         # Account for the possiblility of a -- coming before ENV.
         subsequent_args = self.cli.raw_args[2 if self.cli.mixedargs else 3:]
         with doing(f'Creating virtualenv at "{env}"'):
@@ -230,11 +248,12 @@ class DelCommand(Command):
     name = 'del'
     long_help = """\
 Usage:
-    vnv del ENV...
+  vnv del ENV...
 
 Destroy ENV.
-In other words, delete the folder ENV refers to.
-Use "vnv which ENV" to confirm which folder that is."""
+In other words, delete the directory ENV refers to.
+Use "vnv which ENV" to confirm which directory that is.
+"""
 
     def __call__(self):
         if not self.cli.allargs:
@@ -253,15 +272,24 @@ class ListCommand(Command):
     """List known envs"""
 
     name = 'list'
-    long_help = """\
+
+    @property
+    def long_help(self):
+        exported_path_var = self.cli.shell.exported % path_var
+        return f"""\
 Usage:
-    vnv list [-n | -p]
+  vnv list [-n | -p]
 
-List all envs on the vnv path. See "vnv which --help" for more
-information.
+List all envs on the vnv search path.
 
-If -n is given, only print env names, each on its own line. If -p is
-given, do the same with env paths."""
+If -n is given, only print env names, each on its own line.
+If -p is given, do the same with env paths.
+
+The vnv search path is taken from {exported_path_var}, if defined. \
+Otherwise it defaults to a single directory: {tilde(internal_dir)}. \
+Directories in {exported_path_var} should be separated by a \
+{os.pathsep!r} on this platform.
+"""
 
     def __call__(self):
         paths_only = self.cli.mixedargs.eject('-p')
@@ -273,13 +301,13 @@ given, do the same with env paths."""
             if names_only or paths_only:
                 for env in envs:
                     print(env.name if names_only else env)
-            # Print titles and indented env names, but skip the title if
-            # there's nothing to put under it.
             elif envs:
-                echo('(internal):' if path_entry is internal_dir
-                     else f'{path_entry}:')
+                echo(f'{path_entry}:')
                 for env in envs:
-                    echo(' ' * 4 + env.name)
+                    echo(f'  {env.name}')
+            else:
+                status = 'empty' if path_entry.is_dir() else 'nonexistent'
+                echo(f'{path_entry} ({status})')
 
 
 class WhichCommand(Command):
@@ -291,15 +319,15 @@ class WhichCommand(Command):
     def long_help(self):
         return f"""\
 Usage:
-    vnv which [ENV]
+  vnv which [ENV]
 
 Print the location of ENV, if specified. If not, print the location of
 the cached env. Use this to see what ENV resolves to, or to check the
-cached env (also stored in {self.cli.shell.exported % vnv_cache}).
+cached env (also stored in {self.cli.shell.exported % cache_var}).
 
 When given a name like "my-venv", vnv will only look for it on the vnv
-path. To specify that "my-venv" is in the current directory, use the
-path "./my-venv" instead.
+search path. To specify that "my-venv" is in the current directory, use
+the explicit path "./my-venv" instead.
 
 vnv only finds envs that your shell can activate."""
 
@@ -316,7 +344,7 @@ vnv only finds envs that your shell can activate."""
                 failcheck(envnotfound(env))
         else:
             # Print $VNV_CACHE.
-            cached = os.getenv(vnv_cache)
+            cached = os.getenv(cache_var)
             if cached:  # Could be None or ''
                 print(cached)
             else:

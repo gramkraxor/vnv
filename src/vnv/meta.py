@@ -5,8 +5,7 @@ from pathlib import Path, PurePath
 
 vnv_home = Path.home() / '.vnv'
 internal_dir = vnv_home / 'envs'
-path_file = vnv_home / 'path.txt'
-vnv_cache = 'VNV_CACHE'
+path_var = 'VNV_PATH'
 
 
 def arg_is_name(arg):
@@ -19,14 +18,12 @@ class PathManager:
 
     def __init__(self, shell):
         self.shell = shell
-        try:
-            path_text = path_file.read_text()
-        except OSError:
-            self.raw = ()
+        env_path = os.getenv(path_var)
+        if env_path is None:
+            self.path = (internal_dir,)
         else:
-            path_lines = path_text.splitlines()
-            self.raw = tuple(filter(None, map(str.strip, path_lines)))
-        self.path = (internal_dir, *map(Path, self.raw))
+            pathstrs = env_path.split(os.pathsep)
+            self.path = (*map(Path, pathstrs),)
 
     def get_actfile(self, path):
         """Get a supposed env's activate file."""
@@ -40,7 +37,7 @@ class PathManager:
         return None
 
     def get_envs(self, path_entry):
-        """Yield all the env folders in a vnv path folder."""
+        """Yield all the envs in a vnv search path directory."""
         try:
             for path in path_entry.iterdir():
                 if self.get_actfile(path) is not None:
