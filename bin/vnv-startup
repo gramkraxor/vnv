@@ -3,8 +3,8 @@
 # Rcfile: . vnv-startup
 
 vnv () {
-    vnv.cli bash "$@" && if [ -f ~/.vnv/finish.sh ]; then
-        . ~/.vnv/finish.sh
-        rm ~/.vnv/finish.sh
+    vnv.cli bash "$@" && if [ -f ~/.vnv-finish.sh ]; then
+        . ~/.vnv-finish.sh
+        rm ~/.vnv-finish.sh
     fi
 }

@@ -9,10 +9,11 @@ import textwrap
 
 from . import __version__
 from .lists import BetterList, ChainList
-from .meta import PathManager, arg_is_name, internal_dir, path_var, vnv_home
+from .meta import PathManager, arg_is_name, internal_dir, path_var
 from .shell_compat import shells
 
 cache_var = 'VNV_CACHE'
+finish_file_stem = Path.home() / '.vnv-finish'
 
 
 def badcommand(msg):
@@ -203,8 +204,7 @@ Use --help to get more help with subcommands.
         self.finish([self.cli.shell.deactivate])
 
     def finish(self, lines):
-        vnv_home.mkdir(parents=True, exist_ok=True)
-        finish_file = vnv_home / ('finish' + self.cli.shell.ext)
+        finish_file = finish_file_stem.with_suffix(self.cli.shell.ext)
         finish_file.write_text('\n'.join(lines))
 
 

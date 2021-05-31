@@ -7,7 +7,7 @@ def vnv_xonsh(args):
     if not vnv_cli:
         return vnv_cli
     from pathlib import Path
-    vnv_finish = Path.home() / '.vnv' / 'finish.xsh'
+    vnv_finish = Path.home() / '.vnv-finish.xsh'
     if vnv_finish.is_file():
         source @(str(vnv_finish))
         vnv_finish.unlink()
