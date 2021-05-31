@@ -3,8 +3,7 @@
 import os
 from pathlib import Path, PurePath
 
-vnv_home = Path.home() / '.vnv'
-internal_dir = vnv_home / 'envs'
+envs_home = Path.home() / '.vnv' / 'envs'
 path_var = 'VNV_PATH'
 
 
@@ -20,7 +19,7 @@ class PathManager:
         self.shell = shell
         env_path = os.getenv(path_var)
         if env_path is None:
-            self.path = (internal_dir,)
+            self.path = (envs_home,)
         else:
             pathstrs = env_path.split(os.pathsep)
             self.path = (*map(Path, pathstrs),)

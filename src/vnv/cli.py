@@ -9,7 +9,7 @@ import textwrap
 
 from . import __version__
 from .lists import BetterList, ChainList
-from .meta import PathManager, arg_is_name, internal_dir, path_var
+from .meta import PathManager, arg_is_name, envs_home, path_var
 from .shell_compat import shells
 
 cache_var = 'VNV_CACHE'
@@ -223,8 +223,8 @@ Create an env with virtualenv, forwarding VIRTUALENV_OPTIONS.
 See "virtualenv --help".
 
 If ENV is a name, it will be created in the first directory of the vnv \
-search path ({tilde(self.cli.pathm.path[0])}). To create "my-venv" in \
-the current directory, use the explicit path "./my-venv".
+search path ({tilde(self.cli.pathm.path[0])}). To always create \
+"my-venv" in the current directory, use the explicit path "./my-venv".
 """
 
     def __call__(self):
@@ -288,9 +288,11 @@ If -n is given, only print env names, each on its own line.
 If -p is given, do the same with env paths.
 
 The vnv search path is taken from {exported_path_var}, if defined. \
-Otherwise it defaults to a single directory: {tilde(internal_dir)}. \
-Directories in {exported_path_var} should be separated by a \
-{os.pathsep!r} on this platform.
+It defaults to a single directory: {tilde(envs_home)}. Directories in \
+{exported_path_var} should be separated by a {os.pathsep!r} on this \
+platform.
+
+vnv only finds envs that your shell can activate.
 """
 
     def __call__(self):
@@ -313,7 +315,7 @@ Directories in {exported_path_var} should be separated by a \
 
 
 class WhichCommand(Command):
-    """Which env is ...?"""
+    """Test name resolution"""
 
     name = 'which'
 
@@ -330,8 +332,7 @@ cached env (also stored in {self.cli.shell.exported % cache_var}).
 When given a name like "my-venv", vnv will only look for it on the vnv
 search path. To specify that "my-venv" is in the current directory, use
 the explicit path "./my-venv" instead.
-
-vnv only finds envs that your shell can activate."""
+"""
 
     def __call__(self):
         if len(self.cli.allargs) > 1:
