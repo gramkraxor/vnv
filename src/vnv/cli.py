@@ -269,7 +269,7 @@ Use "vnv which ENV" to confirm which folder that is."""
 
 
 class ListCommand(Command):
-    """List installed envs"""
+    """List known envs"""
 
     name = 'list'
     long_help = """\

@@ -49,12 +49,11 @@ Activating an env caches it for the current shell session, stored in
 
 ### Internal envs
 
-Instead of requiring you to have your own folder for virtualenvs, vnv
-will keep one for you.
+vnv comes with a standard home folder for your virtualenvs.
 It's located at `~/.vnv/envs` and it's the default place for vnv to
 create new envs.
 
-### Installed envs: the "vnv path"
+### The vnv path
 
 vnv looks for envs not just in the internal envs folder, but in any
 folders you choose.
@@ -70,8 +69,6 @@ $ vnv which venv1
 /home/gram/Envs/venv1
 ```
 
-An env is "installed" if it is in a folder on the vnv path.
-
 ### Activate by name, activate by path
 
 When given a name like `my-venv`, vnv will only look for it on the vnv
@@ -83,8 +80,7 @@ To specify that "my-venv" is in the current directory, use the path
 
 Everything vnv does is just a shortcut to the default virtualenv
 behavior.
-This way, everything you make with it will still work even if you ditch
-vnv.
+Everything you make with it will still work even if you ditch vnv.
 
 There are fancier tools out there for managing virtualenvs.
 Try [virtualenvwrapper] or [pew] for the wrapper experience.
@@ -102,7 +98,6 @@ Try [virtualenvwrapper] or [pew] for the wrapper experience.
 - Manage the vnv path with `$ vnv path`
 - Shortcut names: `$ vnv m` can activate `my-venv`
 - Supports `activate_this.py` with `import vnv; vnv.activate('my-venv')`
-- Tries to be useful for scripting
 
 
 ## Installation
