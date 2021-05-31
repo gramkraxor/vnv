@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Instructions for using a vnv-startup file."""
 
+from collections import namedtuple
 import os
 from pathlib import Path
 import sys
@@ -11,37 +12,54 @@ from vnv import shell_compat
 shell_families = tuple(sh for sh in shell_compat.shells
                        if sh.startup is not None)
 
+# A class corresponding to actual, non-abstract shells.
+RealShell = namedtuple('RealShell', ('name', 'family', 'rcfile'))
+real_shells = {rs.name: rs for rs in (
+    RealShell('bash', shell_compat.BASH, '~/.bashrc'),
+    RealShell('zsh', shell_compat.BASH, '~/.zshrc'),
+    RealShell('ksh', shell_compat.BASH, '~/.kshrc'),
+    RealShell('csh', shell_compat.CSHELL, '~/.cshrc'),
+    RealShell('tcsh', shell_compat.CSHELL, '~/.tcshrc'),
+    RealShell('fish', shell_compat.FISH, '~/.config/fish/config.fish'),
+    RealShell('xonsh', shell_compat.XONSH, '~/.xonshrc'),
+)}
+
+
 def stderr(*strings, **kwargs):
+    """Print to stderr."""
     print(*strings, **kwargs, file=sys.stderr)
 
 
 def stderrwrap(string):
-    wrapped = textwrap.fill(string.strip(), width=72, break_on_hyphens=False)
+    """Print a paragraph to stderr."""
+    stripped = textwrap.dedent(string).strip('\n')
+    wrapped = textwrap.fill(stripped, width=72, break_on_hyphens=False)
     stderr(wrapped, end='\n\n')
 
 
 def main():
-    env_shell = Path(os.getenv('SHELL') or '/bin/bash').name
-    rcfile_guess = ('~/.config/fish/config.fish' if env_shell == 'fish'
-                    else f'~/.{env_shell}rc')
+    env_shell = Path(os.getenv('SHELL', '')).stem
+    real_shell = real_shells.get(env_shell, real_shells['bash'])
     stderrwrap('vnv: Wrapper needed for this shell.')
     stderrwrap("""
-Here are the virtualenv activators with the corresponding startup
-commands needed to use them:
-""")
+        Here are the virtualenv activators with the corresponding
+        startup commands needed to use them:
+    """)
     actfiles_len = max(len(sh.actfile) for sh in shell_families)
     for sh in shell_families:
         stderr(f'  {sh.actfile.ljust(actfiles_len)}    {sh.startup}')
     stderr()
     stderrwrap(f"""
-To finish installing vnv, add the right startup command to your shell's
-startup file ({rcfile_guess} maybe?) and then run the same command in
-this session.
-""")
-    stderrwrap('For example, to set up vnv for bash, you would run:')
-    bash = shell_compat.BASH
-    stderr(f"  echo '{bash.startup}' >> ~/.bashrc")
-    stderr(f'  {bash.startup}')
+        To finish installing vnv, add the right startup command to your
+        shell's startup file ({real_shell.rcfile} maybe?) and then run
+        the same command in this session.
+    """)
+    stderrwrap(f"""
+        For example, to set up vnv for {real_shell.name}, you would run:
+    """)
+    startup = real_shell.family.startup
+    stderr(f"  echo '{startup}' >> {real_shell.rcfile}")
+    stderr(f'  {startup}')
     sys.exit(2)
 
 
