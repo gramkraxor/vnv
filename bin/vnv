@@ -30,11 +30,12 @@ def stderr(*strings, **kwargs):
     print(*strings, **kwargs, file=sys.stderr)
 
 
-def stderrwrap(string):
+def stderrwrap(string, trailing_blank=True):
     """Print a paragraph to stderr."""
     stripped = textwrap.dedent(string).strip('\n')
     wrapped = textwrap.fill(stripped, width=72, break_on_hyphens=False)
-    stderr(wrapped, end='\n\n')
+    end = '\n\n' if trailing_blank else '\n'
+    stderr(wrapped, end=end)
 
 
 def main():
@@ -44,7 +45,7 @@ def main():
     stderrwrap("""
         Here are the virtualenv activators with the corresponding
         startup commands needed to use them:
-    """)
+    """, False)
     actfiles_len = max(len(sh.actfile) for sh in shell_families)
     for sh in shell_families:
         stderr(f'  {sh.actfile.ljust(actfiles_len)}    {sh.startup}')
@@ -56,7 +57,7 @@ def main():
     """)
     stderrwrap(f"""
         For example, to set up vnv for {real_shell.name}, you would run:
-    """)
+    """, False)
     startup = real_shell.family.startup
     stderr(f"  echo '{startup}' >> {real_shell.rcfile}")
     stderr(f'  {startup}')
