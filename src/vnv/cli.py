@@ -1,6 +1,5 @@
 """The main component of vnv."""
 
-import itertools
 import os
 from pathlib import Path
 import re
@@ -148,7 +147,13 @@ class MainCommand(Command):
 
     @property
     def long_help(self):
-        start = f"""\
+        subcmds = list(self.cli.commands.values())
+        names = tuple(subcmd.name or '(none)' for subcmd in subcmds)
+        maxwidth = max(map(len, names))
+        subcmd_list = (f'  {name.ljust(maxwidth)}  {subcmd.help}'
+                       for name, subcmd in zip(names, subcmds))
+        subcmd_table = '\n'.join(subcmd_list)
+        return f"""\
 Usage:
   vnv [ENV]
   vnv SUBCOMMAND [ARGS]
@@ -158,14 +163,11 @@ vnv {__version__}, the little shortcut for virtualenv.
 Run "vnv ENV" to activate and cache an env, then just "vnv" to toggle \
 it afterwards.
 
-Available subcommands:"""
-        subcmds = list(self.cli.commands.values())
-        names = tuple(subcmd.name or '(none)' for subcmd in subcmds)
-        maxwidth = max(map(len, names))
-        subcmd_list = (f'  {name.ljust(maxwidth)}  {subcmd.help}'
-                       for name, subcmd in zip(names, subcmds))
-        end = '\nUse --help to get more help with subcommands.'
-        return '\n'.join(itertools.chain((start,), subcmd_list, (end,)))
+Available subcommands:
+{subcmd_table}
+
+Use --help to get more help with subcommands.
+"""
 
     def __call__(self):
         if len(self.cli.allargs) > 1:
