@@ -26,7 +26,7 @@ But what about your old virtualenvs? If you keep them all in a folder or
 two somewhere, just tell vnv where they are and you can activate them by
 name anywhere on your system:
 ```
-$ vnv path add /old-envs
+$ export VNV_PATH="/old-envs"
 $ cd anywhere
 $ vnv my-old-env
 (my-old-env) $
@@ -47,34 +47,36 @@ virtualenv environments.
 Activating an env caches it for the current shell session, stored in
 `$VNV_CACHE`.
 
-### Internal envs
+### The vnv search path
 
-vnv comes with a standard home folder for your virtualenvs.
-It's located at `~/.vnv/envs` and it's the default place for vnv to
-create new envs.
-
-### The vnv path
-
-vnv looks for envs not just in the internal envs folder, but in any
-folders you choose.
-Together they make up the "vnv path", with the custom folders listed,
-newline-separated, in `~/.vnv/path.txt`.
+You control where vnv finds envs to activate.
+The search path defaults to `~/.vnv/envs`, but is overridden by
+`$VNV_PATH`.
 
 ```
-$ vnv path add ~/Envs
-$ vnv path
-0. /home/gram/.vnv/envs  (internal)
-1. /home/gram/Envs
-$ vnv which venv1
-/home/gram/Envs/venv1
+$ vnv list
+/home/gram/.vnv/envs:
+  my-venv
+$ export VNV_PATH="$HOME/Envs:$HOME/venv"
+$ vnv list
+/home/gram/Envs:
+  django-site
+  flask-site
+/home/gram/venv:
+  numpy
+$ vnv which flask-site
+/home/gram/Envs/flask-site
 ```
+
+By default, `vnv new` creates envs in the first directory of the search
+path.
 
 ### Activate by name, activate by path
 
 When given a name like `my-venv`, vnv will only look for it on the vnv
-path.
-To specify that "my-venv" is in the current directory, use the path
-`./my-venv` instead.
+search path.
+To specify that "my-venv" is in the current directory, use the explicit
+path `./my-venv` instead.
 
 ### Shortcut, not a wrapper
 
@@ -90,12 +92,11 @@ Try [virtualenvwrapper] or [pew] for the wrapper experience.
 
 ### Other features
 
-- Cross-platform, cross-shell
-- Multiple vnv path directories
+- Cross-platform and cross-shell
+- Multiple search path directories
 - Single 3-character command for everything
 - Create envs with `$ vnv new`, forwarding additional args to virtualenv
 - Manage envs with `$ vnv list`, `$ vnv which`, `$ vnv del`
-- Manage the vnv path with `$ vnv path`
 - Shortcut names: `$ vnv m` can activate `my-venv`
 - Supports `activate_this.py` with `import vnv; vnv.activate('my-venv')`
 
@@ -123,16 +124,16 @@ Instructions included.
 
 ## Some more ideas
 
-If you want to have a default env, you could pre-set `VNV_CACHE` to its
+If you want to have a default env, you could pre-set `$VNV_CACHE` to its
 location when your shell starts.
 Use your startup file (or the environment variables on Windows).
 
 If you want to activate envs in the current directory by name, add `.`
-to the vnv path with `$ vnv path add .`.
+to the vnv search path.
 
-vnv path folders don't have to only contain virtualenvs.
+vnv search path folders don't have to only contain virtualenvs.
 If you keep an env alongside other stuff in a project folder, it's fine
-to add the whole project folder to the vnv path.
+to add the whole project folder to `$VNV_PATH`.
 
 
 ## Credits
