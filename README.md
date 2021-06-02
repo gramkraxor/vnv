@@ -26,7 +26,7 @@ But what about your old virtualenvs? If you keep them all in a folder or
 two somewhere, just tell vnv where they are and you can activate them by
 name anywhere on your system:
 ```
-$ export VNV_PATH="/old-envs"
+$ export VNV_PATH="$HOME/old-envs"
 $ cd anywhere
 $ vnv my-old-env
 (my-old-env) $
@@ -57,15 +57,13 @@ The search path defaults to `~/.vnv/envs`, but is overridden by
 $ vnv list
 /home/gram/.vnv/envs:
   my-venv
-$ export VNV_PATH="$HOME/Envs:$HOME/venv"
+$ export VNV_PATH="$HOME/old-envs:/path/to"
 $ vnv list
-/home/gram/Envs:
-  django-site
-  flask-site
-/home/gram/venv:
-  numpy
-$ vnv which flask-site
-/home/gram/Envs/flask-site
+/home/gram/old-envs:
+  my-old-env
+  flask-project
+/path/to:
+  a-venv
 ```
 
 By default, `vnv new` creates envs in the first directory of the search
