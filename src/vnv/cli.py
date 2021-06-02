@@ -12,7 +12,7 @@ from .lists import BetterList, ChainList
 from .meta import PathManager, arg_is_name, envs_home, path_var
 from .shell_compat import shells
 
-cache_var = 'VNV_CACHE'
+cache_var = 'VNV_CACHED'
 finish_file_stem = Path.home() / '.vnv-finish'
 
 
@@ -346,7 +346,7 @@ the explicit path "./my-venv" instead.
             else:
                 failcheck(envnotfound(env))
         else:
-            # Print $VNV_CACHE.
+            # Print $VNV_CACHED.
             cached = os.getenv(cache_var)
             if cached:  # Could be None or ''
                 print(cached)

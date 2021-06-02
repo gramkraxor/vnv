@@ -45,7 +45,7 @@ $ vnv /path/to/a-venv
 Shown above, vnv offers a shortcut for activating and deactivating
 virtualenv environments.
 Activating an env caches it for the current shell session, stored in
-`$VNV_CACHE`.
+`$VNV_CACHED`.
 
 ### The vnv search path
 
@@ -122,8 +122,8 @@ Instructions included.
 
 ## Some more ideas
 
-If you want to have a default env, you could pre-set `$VNV_CACHE` to its
-location when your shell starts.
+If you want to have a default env, you could pre-set `$VNV_CACHED` to
+its location when your shell starts.
 Use your startup file (or the environment variables on Windows).
 
 If you want to activate envs in the current directory by name, add `.`
