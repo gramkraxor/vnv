@@ -116,7 +116,7 @@ interpreter itself.
 
 If you use one of those that ends in "sh", you'll also need to load the
 corresponding wrapper script in your startup file.
-For example, bash requires the line `. vnv-startup` in `~/.bashrc`.
+For example, bash requires the line `. vnv-init` in `~/.bashrc`.
 Instructions included.
 
 

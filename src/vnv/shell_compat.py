@@ -25,7 +25,7 @@ BASH = Shell(  # Also zsh, and maybe ksh
     exported='$%s',
     ext='.sh',
     source='. "%s"',
-    startup='. vnv-startup',
+    startup='. vnv-init',
 )
 
 BATCH = Shell(
@@ -47,7 +47,7 @@ CSHELL = Shell(
     exported='$%s',
     ext='.csh',
     source='source "%s"',
-    startup='source `which vnv-startup.csh`',
+    startup='source `which vnv-init.csh`',
 )
 
 FISH = Shell(
@@ -58,7 +58,7 @@ FISH = Shell(
     exported='$%s',
     ext='.fish',
     source='source "%s"',
-    startup='source < (which vnv-startup.fish)'
+    startup='source < (which vnv-init.fish)'
 )
 
 POWERSHELL = Shell(
@@ -86,7 +86,7 @@ XONSH = Shell(
     exported='$%s',
     ext='.xsh',
     source='source "%s"',
-    startup='source vnv-startup.xsh',
+    startup='source vnv-init.xsh',
 )
 
 shells = (BASH, BATCH, CSHELL, FISH, POWERSHELL, PYTHON, XONSH)

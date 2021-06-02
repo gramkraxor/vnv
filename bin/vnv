@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Instructions for using a vnv-startup file."""
+"""Instructions for using a vnv-init file."""
 
 from collections import namedtuple
 import os

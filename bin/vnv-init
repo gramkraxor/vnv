@@ -1,6 +1,6 @@
 # vnv, the little shortcut for virtualenv.
 # Startup script for bash/zsh/ksh.
-# Rcfile: . vnv-startup
+# Rcfile: . vnv-init
 
 vnv () {
     vnv.cli bash "$@" && if [ -f ~/.vnv-finish.sh ]; then

@@ -1,6 +1,6 @@
 # vnv, the little shortcut for virtualenv.
 # Startup script for fish.
-# Rcfile: source < (which vnv-startup.fish)
+# Rcfile: source < (which vnv-init.fish)
 
 function vnv
     set -l vnv_finish ~/.vnv-finish.fish

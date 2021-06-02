@@ -1,6 +1,6 @@
 # vnv, the little shortcut for virtualenv.
 # Startup script for xonsh.
-# Rcfile: source vnv-startup.xsh
+# Rcfile: source vnv-init.xsh
 
 def vnv_xonsh(args):
     vnv_cli = ![vnv.cli xonsh @(args)]
