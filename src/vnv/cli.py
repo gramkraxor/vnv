@@ -238,10 +238,15 @@ search path ({tilde(self.cli.pathm.path[0])}). To always create \
         if arg_is_name(env):
             first_dir = self.cli.pathm.path[0]
             env = str(first_dir / env)
+        # If the env path starts with `-`, prefix it with `./`.
+        if env.startswith('-'):
+            env_arg = f'.{os.path.sep}{env}'
+        else:
+            env_arg = env
         # Account for the possiblility of a -- coming before ENV.
         subsequent_args = self.cli.raw_args[2 if self.cli.mixedargs else 3:]
         with doing(f'Creating virtualenv at "{env}"'):
-            virtualenv.cli_run([env, *subsequent_args])
+            virtualenv.cli_run([env_arg, *subsequent_args])
 
 
 class DelCommand(Command):
