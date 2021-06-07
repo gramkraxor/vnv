@@ -9,7 +9,7 @@ import textwrap
 
 from . import __version__
 from .lists import BetterList, ChainList
-from .meta import PathManager, arg_is_name, envs_home, path_var
+from .search import Searcher, arg_is_name, envs_home, path_var
 from .shell_compat import shells
 
 cache_var = 'VNV_CACHED'
@@ -125,7 +125,7 @@ class CLI:
         self.allargs = ChainList(self.mixedargs, ddargs)
         help_flag = self.mixedargs.eject('--help')
         cmd = selectnpop(self.commands, self.mixedargs)
-        self.pathm = PathManager(self.shell)
+        self.search = Searcher(self.shell)
         if help_flag:
             echo(cmd.long_help)
         else:
@@ -175,7 +175,7 @@ Use --help to get more help with subcommands.
             badcommand(expectedgot('0 or 1', len(self.cli.allargs)))
         if self.cli.allargs:
             # Env specified, so activate that.
-            actfile = self.cli.pathm.lookup(self.cli.allargs[0])
+            actfile = self.cli.search.lookup(self.cli.allargs[0])
             if actfile is None:
                 fatalerror(envnotfound(self.cli.allargs[0]))
             self.activate(actfile, True)
@@ -188,7 +188,7 @@ Use --help to get more help with subcommands.
             if not cached:  # Could be None or ''
                 fatalerror('No env cached.'
                            '\nTry "vnv --help" for more information.')
-            actfile = self.cli.pathm.get_actfile(Path(cached))
+            actfile = self.cli.search.get_actfile(Path(cached))
             if actfile is None:
                 fatalerror(f'Cached env "{cached}" is not really an env.')
             self.activate(actfile)
@@ -223,7 +223,7 @@ Create an env with virtualenv, forwarding VIRTUALENV_OPTIONS.
 See "virtualenv --help".
 
 If ENV is a name, it will be created in the first directory of the vnv \
-search path ({tilde(self.cli.pathm.path[0])}). To always create \
+search path ({tilde(self.cli.search.path[0])}). To always create \
 "my-venv" in the current directory, use the explicit path "./my-venv".
 """
 
@@ -236,7 +236,7 @@ search path ({tilde(self.cli.pathm.path[0])}). To always create \
         except ImportError:
             fatalerror('Cannot access virtualenv. Is it installed?')
         if arg_is_name(env):
-            first_dir = self.cli.pathm.path[0]
+            first_dir = self.cli.search.path[0]
             env = str(first_dir / env)
         # If the env path starts with `-`, prefix it with `./`.
         if env.startswith('-'):
@@ -266,7 +266,7 @@ Use "vnv which ENV" to confirm which directory that is.
         if not self.cli.allargs:
             badcommand(expectedgot('1 or more', 0))
         for env in self.cli.allargs:
-            actfile = self.cli.pathm.lookup(env)
+            actfile = self.cli.search.lookup(env)
             if actfile is not None:
                 env_folder = actfile.parents[1]
                 with doing(f'Deleting env "{env_folder}"'):
@@ -305,8 +305,8 @@ vnv only finds envs that your shell can activate.
         names_only = not paths_only and self.cli.mixedargs.eject('-n')
         if self.cli.allargs:
             badcommand(expectedgot(0, len(self.cli.allargs)))
-        for path_entry in self.cli.pathm.path:
-            envs = tuple(self.cli.pathm.get_envs(path_entry))
+        for path_entry in self.cli.search.path:
+            envs = tuple(self.cli.search.get_envs(path_entry))
             if names_only or paths_only:
                 for env in envs:
                     print(env.name if names_only else env)
@@ -345,7 +345,7 @@ the explicit path "./my-venv" instead.
         env = self.cli.allargs.safepop(0)
         if env is not None:
             # Resolve and print env.
-            actfile = self.cli.pathm.lookup(env)
+            actfile = self.cli.search.lookup(env)
             if actfile is not None:
                 print(actfile.parents[1])
             else:

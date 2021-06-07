@@ -12,8 +12,8 @@ def arg_is_name(arg):
     return arg != '..' and PurePath(arg).name == arg
 
 
-class PathManager:
-    """Path resolution manager."""
+class Searcher:
+    """Search path and env resolver."""
 
     def __init__(self, shell):
         self.shell = shell
