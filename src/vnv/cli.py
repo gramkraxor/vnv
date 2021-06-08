@@ -8,7 +8,7 @@ import sys
 import textwrap
 
 from . import __version__
-from .lists import BetterList, ChainList
+from .lists import ChainList
 from .search import Searcher, arg_is_name, envs_home, path_var
 from .shell_compat import shells
 
@@ -45,6 +45,15 @@ def echo(text, width=72, **kwargs):
             line = textwrap.fill(line, width=width, replace_whitespace=False,
                                  subsequent_indent=indent)
         print(line, **kwargs)
+
+
+def eject(ls, item):
+    """Try to find and remove the item, returning whether it was found."""
+    try:
+        ls.remove(item)
+    except ValueError:
+        return False
+    return True
 
 
 def envnotfound(env):
@@ -119,11 +128,13 @@ class CLI:
         self.commands = {cmd.name: cmd for cmd in cmds}
         # If -- is an argument, split the args on it.
         # Options/subcommands can only be on the left side.
-        dd_index = args.index('--') if '--' in args else len(args)
-        self.mixedargs, ddargs = map(BetterList,
-                                     (args[:dd_index], args[dd_index + 1:]))
+        try:
+            dd_index = args.index('--')
+        except ValueError:
+            dd_index = len(args)
+        self.mixedargs, ddargs = args[:dd_index], args[dd_index + 1:]
         self.allargs = ChainList(self.mixedargs, ddargs)
-        help_flag = self.mixedargs.eject('--help')
+        help_flag = eject(self.mixedargs, '--help')
         cmd = selectnpop(self.commands, self.mixedargs)
         self.search = Searcher(self.shell)
         if help_flag:
@@ -301,8 +312,8 @@ vnv only finds envs that your shell can activate.
 """
 
     def __call__(self):
-        paths_only = self.cli.mixedargs.eject('-p')
-        names_only = not paths_only and self.cli.mixedargs.eject('-n')
+        paths_only = eject(self.cli.mixedargs, '-p')
+        names_only = not paths_only and eject(self.cli.mixedargs, '-n')
         if self.cli.allargs:
             badcommand(expectedgot(0, len(self.cli.allargs)))
         for path_entry in self.cli.search.path:
@@ -340,10 +351,10 @@ the explicit path "./my-venv" instead.
 """
 
     def __call__(self):
-        if len(self.cli.allargs) > 1:
-            badcommand(expectedgot('0 or 1', len(self.cli.allargs)))
-        env = self.cli.allargs.safepop(0)
-        if env is not None:
+        if self.cli.allargs:
+            if len(self.cli.allargs) > 1:
+                badcommand(expectedgot('0 or 1', len(self.cli.allargs)))
+            env = self.cli.allargs[0]
             # Resolve and print env.
             actfile = self.cli.search.lookup(env)
             if actfile is not None:
