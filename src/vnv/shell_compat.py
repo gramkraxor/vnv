@@ -1,6 +1,6 @@
 """Compatibility between the shells virtualenv supports.
 
-bash/zsh vs cmd.exe vs csh vs fish vs PowerShell vs xonsh.
+bash/zsh vs cmd.exe vs csh vs fish vs PowerShell.
 """
 
 from collections import namedtuple
@@ -78,15 +78,4 @@ PYTHON = Shell(
     # No finish script or startup line
 )
 
-XONSH = Shell(
-    name='xonsh',
-    actfile='activate.xsh',
-    deactivate='deactivate',
-    export='$%s = "%s"',
-    exported='$%s',
-    ext='.xsh',
-    source='source "%s"',
-    startup='source vnv-init.xsh',
-)
-
-shells = (BASH, BATCH, CSHELL, FISH, POWERSHELL, PYTHON, XONSH)
+shells = (BASH, BATCH, CSHELL, FISH, POWERSHELL, PYTHON)

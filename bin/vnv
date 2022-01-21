@@ -21,7 +21,6 @@ real_shells = {rs.name: rs for rs in (
     RealShell('csh', shell_compat.CSHELL, '~/.cshrc'),
     RealShell('tcsh', shell_compat.CSHELL, '~/.tcshrc'),
     RealShell('fish', shell_compat.FISH, '~/.config/fish/config.fish'),
-    RealShell('xonsh', shell_compat.XONSH, '~/.xonshrc'),
 )}
 
 
