@@ -326,7 +326,11 @@ vnv only finds envs that your shell can activate.
                 for env in envs:
                     echo(f'  {env.name}')
             else:
-                status = 'empty' if path_entry.is_dir() else 'nonexistent'
+                try:
+                    is_dir = path_entry.is_dir()
+                except OSError:
+                    is_dir = False
+                status = 'empty' if is_dir else 'nonexistent'
                 echo(f'{path_entry} ({status})')
 
 

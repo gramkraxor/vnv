@@ -31,7 +31,11 @@ class Searcher:
         for scripts_dir in ('bin', 'Scripts'):
             # Check both platforms' scripts folders.
             actfile = path / scripts_dir / self.shell.actfile
-            if actfile.is_file():
+            try:
+                is_file = actfile.is_file()
+            except OSError:
+                is_file = False
+            if is_file:
                 return actfile.absolute()
         return None
 
@@ -41,7 +45,7 @@ class Searcher:
             for path in path_entry.iterdir():
                 if self.get_actfile(path) is not None:
                     yield path
-        except FileNotFoundError:  # path_entry is not a dir
+        except OSError:  # path_entry is not a readable dir
             pass
 
     def lookup(self, env):
