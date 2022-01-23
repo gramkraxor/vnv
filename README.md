@@ -132,12 +132,3 @@ to the vnv search path.
 vnv search path folders don't have to only contain virtualenvs.
 If you keep an env alongside other stuff in a project folder, it's fine
 to add the whole project folder to `$VNV_PATH`.
-
-
-## Credits
-
-vnv is made by me, Gramkraxor.
-It's in the public domain, so it's yours to tinker with.
-
-
-[![xkcd #1319: Automation](https://imgs.xkcd.com/comics/automation.png "xkcd #1319: Automation")](https://xkcd.com/1319/)
