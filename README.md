@@ -110,8 +110,8 @@ Make sure to install vnv on your base Python installation, *not* in a
 virtual environment.
 You'll need access to it inside *and* outside of envs.
 
-vnv supports all 7 activators virtualenv supports, meaning it works with
-bash/zsh/ksh, cmd.exe, csh, fish, PowerShell, xonsh, and the Python
+vnv supports 6 of the 7 activators virtualenv supports, meaning it works
+with bash/zsh/ksh, cmd.exe, csh, fish, PowerShell, and the Python
 interpreter itself.
 
 If you use one of those that ends in "sh", you'll also need to load the
