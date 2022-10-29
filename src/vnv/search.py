@@ -28,7 +28,7 @@ class Searcher:
         """Get a supposed env's activate file."""
         # If there is a bin/activate or Scripts/activate.bat, etc.,
         # assume `path` is a real env.
-        for scripts_dir in ('bin', 'Scripts'):
+        for scripts_dir in ('bin', 'local/bin', 'Scripts'):
             # Check both platforms' scripts folders.
             actfile = path / scripts_dir / self.shell.actfile
             try:
